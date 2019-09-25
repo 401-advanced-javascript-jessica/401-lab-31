@@ -1,6 +1,6 @@
-import React, {useState, useReducer } from 'react';
+import React, { useState, useReducer } from 'react';
 
-import Auth from '../auth/auth.js';
+import Auth from '../auth/auth';
 
 import styles from './todo.module.scss';
 
@@ -8,53 +8,51 @@ const initialState = {
   toDoItems: [],
 };
 
-function reducer(state, action){
+function reducer(state, action) {
   console.log(action);
-  switch (action.type){
-    case "submit":
-      let tempItems = Object.assign([], state.toDoItems);
+  let tempItems;
+  switch (action.type) {
+    case 'submit':
+      tempItems = Object.assign([], state.toDoItems);
       tempItems.push(action.data);
       return { toDoItems: tempItems };
-    case "toggle":
-      return {toDoItems: action.data};
+    case 'toggle':
+      return { toDoItems: action.data };
     default:
       throw new Error();
   }
 }
 
-export default function Todo(props) {
-
+export default function Todo() {
   const [item, setItem] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function handleForm(e) {
     e.preventDefault();
     e.target.reset();
-    let newItem = { title: item, status:false };
-    dispatch({ type: "submit", data: newItem });
+    const newItem = { title: item, status: false };
+    dispatch({ type: 'submit', data: newItem });
   }
 
   function handleChange(e) {
-    setItem( e.target.value );
+    setItem(e.target.value);
   }
 
-  function toggle(e,id){
+  function toggle(e, id) {
     e.preventDefault();
-    let toDoItems = state.toDoItems.map( (item,idx) =>
-      idx === id ? {title:item.title, status:!item.status} : item
+    const toDoItems = state.toDoItems.map(
+      (toDo, idx) => (idx === id ? { title: toDo.title, status: !toDo.status } : toDo),
     );
-    dispatch({ type: "toggle", data: toDoItems});
+    dispatch({ type: 'toggle', data: toDoItems });
   }
 
-    return (
+  return (
       <section className={styles.todo}>
 
         <Auth capability="read">
-          {state.toDoItems.map((item, idx) =>
-            <div key={idx} onClick={(e) => toggle(e, idx)}>
-              <span className={styles[`complete-${item.status}`]}> {item.title} </span>
-            </div>
-          )}
+          {state.toDoItems.map((eachItem, idx) => <div key={idx} onClick={ (e) => toggle(e, idx)}>
+              <span className={styles[`complete-${eachItem.status}`]}> {eachItem.title} </span>
+            </div>)}
         </Auth>
 
         <Auth capability="create">
@@ -68,6 +66,5 @@ export default function Todo(props) {
         </Auth>
 
       </section>
-    );
-};
-
+  );
+}

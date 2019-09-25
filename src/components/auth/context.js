@@ -1,22 +1,22 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import jwt from 'jsonwebtoken';
+import PropTypes from 'prop-types';
 
 export const LoginContext = React.createContext();
 
 const SECRET = process.env.REACT_APP_SECRET || 'changeit';
 
-const setLoginState = token => {
+const setLoginState = (token) => {
   let loggedIn = false;
   let user = {};
-  try{
+  try {
     user = jwt.verify(token, SECRET);
     loggedIn = true;
-  } catch(e) {
+  } catch (e) {
     loggedIn = false;
-    token = null;
   }
-  return {user,loggedIn,token};
+  return { user, loggedIn, token };
 };
 
 class LoginProvider extends React.Component {
@@ -30,21 +30,23 @@ class LoginProvider extends React.Component {
 
   login = (loginToken) => {
     cookie.save('auth', loginToken);
-    let {user,loggedIn,token} = setLoginState(loginToken);
-    this.setState({user,loggedIn,token});
+    const { user, loggedIn, token } = setLoginState(loginToken);
+    this.setState({ user, loggedIn, token });
   };
 
   logout = () => {
     cookie.remove('auth');
-    this.setState({user:{},loggedIn:false,token:null});
+    this.setState({ user: {}, loggedIn: false, token: null });
   };
 
   static getDerivedStateFromProps(props, state) {
     const qs = new URLSearchParams(document.location.search);
     const cookieToken = cookie.load('auth');
-    let loginToken = qs.get('token') || cookieToken || null;
-    let {user,loggedIn,token} = setLoginState(loginToken);
-    return {...state, user, loggedIn, token };
+    const loginToken = qs.get('token') || cookieToken || null;
+    const { user, loggedIn, token } = setLoginState(loginToken);
+    return {
+      ...state, user, loggedIn, token, 
+    };
   }
 
   render() {
@@ -57,3 +59,7 @@ class LoginProvider extends React.Component {
 }
 
 export default LoginProvider;
+
+LoginProvider.propTypes = {
+  children: PropTypes.object,
+};

@@ -8,11 +8,11 @@ class LoginProvider extends React.Component {
     super(props);
     // Yes, setting state from props is an anti-pattern.
     // But this is a mock, we're matching the external API, so bite me.
-    let token = props.token && jwt.sign(props.token, props.secret);
+    const token = props.token && jwt.sign(props.token, props.secret);
     this.state = {
       loggedIn: !!props.loggedIn,
-      token: token,
-      user: { capabilities: ['create','read','update','delete'] }
+      token,
+      user: { capabilities: ['create', 'read', 'update', 'delete'] },
     };
   }
 

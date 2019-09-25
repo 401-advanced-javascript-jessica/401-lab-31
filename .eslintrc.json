@@ -17,5 +17,10 @@
     "no-trailing-spaces":"off",
     "no-underscore-dangle": "off",
     "strict": "off"
+  },
+  "globals": {
+    "shallow": true,
+    "render": true,
+    "mount": true
   }
 }
